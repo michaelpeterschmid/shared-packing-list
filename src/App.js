@@ -1,6 +1,9 @@
+import Navbar from "./components/Navbar";
+
 function App() {
   return (
     <div className="App">
+      <Navbar></Navbar>
       <h1>Ttile h1</h1>
       <h2>Ttile h2</h2>
       <h3>Ttile h3</h3>
