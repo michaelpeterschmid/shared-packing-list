@@ -1,13 +1,207 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/*
+General styling approach 
+
+Inside index.css:
+----------------
+- reset
+- define variables for colors, spacing, typography, and breakpoints for media queries
+- define cross-app-style in (p, headings, buttons, forms, lists, modals)
+- define focus/hover/active state for links and buttons
+- define gloabl body (font family etc)
+
+inside component.css:
+---------------------
+- component specific styles
+- responsive behaviour for component using mobile firts approach and media queries
+
+General:
+-----------------------
+- use bem naming convention
+- mobile first
+- test on different browsers and devices (chrome, safarai, edge)
+
+Typography (fluid)
+      Headings + body size
+Layout spacing (fluid)
+    Section padding, large gaps
+Component styling (fixed)
+    Buttons, cards, inputs, border-radius
+
+*/
+
+
+/*Import preffered google font*/
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+
+
+/*RESET*/
+/* 1. Use a more-intuitive box-sizing model */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* 2. Remove default margin */
+* {
+  margin: 0;
 }
+
+/* 3. Enable keyword animations */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    interpolate-size: allow-keywords;
+  }
+}
+
+body {
+  /* 4. Add accessible line-height */
+  line-height: 1.5;
+  /* 5. Improve text rendering */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 6. Improve media defaults */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* 7. Inherit fonts for form controls */
+input, button, textarea, select {
+  font: inherit;
+}
+
+/* 8. Avoid text overflows */
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+
+/* 9. Improve line wrapping */
+p {
+  text-wrap: pretty;
+}
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+}
+
+/*
+  10. Create a root stacking context
+*/
+#root, #__next {
+  isolation: isolate;
+}
+/*Global scope variables*/
+
+:root {
+  /* colors */
+  --primary-bg-color: white;
+  --primary-color: #dda15e;
+  --secondary-color: #bc6c25;
+  --text-color: #222222;
+  --border-color: #e0e0e0; /* optional neutral */
+
+
+  /*spacing fix for small ones fluid for big ones!*/
+  --spacing-xxs: 0.25rem; /* 4px */
+  --spacing-xs:  0.5rem;  /* 8px */
+  --spacing-s:   1rem;    /* 16px */
+  --spacing-m: 1.5rem;    /* 24px */
+  /* Fluid spacing (for layout / sections) */
+  --spacing-l:   clamp(1.5rem, 2vw + 1rem, 3rem);
+  --spacing-xl:  clamp(2rem, 3vw + 1rem, 4rem);
+  --spacing-xxl: clamp(3rem, 5vw + 2rem, 6rem);
+
+  /*Typgraphy font sizes and font weights */
+  --text-fluid-xl: clamp(1.5rem, 1vw + 1rem, 2.5rem);
+  --text-fluid-lg: clamp(1.25rem, 0.8vw + 0.8rem, 2rem);
+  --text-fluid-md: clamp(1.125rem, 0.7vw + 0.8rem, 1.75rem);
+  --text-fluid-sm: clamp(1rem, 0.6vw + 0.75rem, 1.25rem);
+  --text-fluid-base: clamp(1rem, 0.5vw + 0.75rem, 1.25rem);
+  --weight-light: 300;
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+
+
+  /*reference Media queries breakpoints NOTE: Still have to write them explicitely in the media query - can't use var there*/
+  --bp-smartphone: 30rem;  /* 480px */
+  --bp-tablet: 48rem;      /* 768px */
+  --bp-desktop: 64rem;     /* 1024px */
+}
+
+/* define font-family  */
+body {
+  min-height: 100dvh; /*full background coverage guaranteed*/
+  font-family: Poppins, sans-serif;
+  font-size: var(--text-fluid-base);
+  color: var(--text-color);
+  background-color: var(--primary-bg-color);
+
+}
+
+/*define cross-app-styles*/
+
+h1 { font-size: var(--text-fluid-xl); }
+h2 { font-size: var(--text-fluid-lg); }
+h3 { font-size: var(--text-fluid-md); }
+h4 { font-size: var(--text-fluid-sm); }
+p  { font-size: var(--text-fluid-base); }
+
+h1, h2, h3, h4 {
+  margin-bottom: var(--spacing-s);
+}
+
+p {
+  margin-bottom: var(--spacing-xs);
+}
+
+button {
+  background: none;
+  border: 2px solid var(--secondary-color);
+  padding: var(--spacing-xs) var(--spacing-s);
+  border-radius: 4px;
+  color: var(--secondary-color);
+  font-weight: var(--weight-bold);
+  cursor: pointer;
+  font-size: var(--text-fluid-base);
+}
+
+/*define states for button and maybe links*/
+button:hover {
+  background: var(--secondary-color) ;
+  color: var(--primary-bg-color);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--secondary-color);
+  outline-offset: 2px;
+}
+
+
+a {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+a:hover {
+  color: var(--secondary-color);
+  font-weight: var(--weight-medium);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--text-color);
+  outline-offset: 2px;
+}
+
+
+/*Utility classes*/
+.no-bullets {
+  list-style: none;
+  padding-left: 0;
+}
+
+.center-text {
+  text-align: center;
+}
+
+
