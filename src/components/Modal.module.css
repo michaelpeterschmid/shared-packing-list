@@ -1,0 +1,37 @@
+.backdrop {
+  position: fixed; /*This makes the element anchored to the viewport, not the normal page layout. So its positioning is relative to the browser window.*/
+  inset: 0; /*A shorthand for top: 0; right: 0; bottom: 0; left: 0;   --- literally forces the element to fill the screen */
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center; /*horizontally centers everything inside the backdrop*/
+  align-items: center; /*vertically centers everything in the backdrop*/
+  z-index: 1000; 
+}
+
+.modal {
+  background: var(--primary-bg-color);
+  color: var(--text-color);
+  padding: var(--spacing-m);
+  border-radius: 8px;
+  min-width: 280px;
+  max-width: 420px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-s);
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.body {
+  margin-top: var(--spacing-xs);
+}

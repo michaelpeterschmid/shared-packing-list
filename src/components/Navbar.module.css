@@ -1,2 +1,36 @@
 /*mobile first approach*/
+/*No need for bem since css modules already give block scoping*/
+
+
+.navbar {
+    width: 100%;
+    background: hsla(32, 65%, 62%, 0.49);
+    padding: var(--spacing-m) var(--spacing-s);
+    font-size: var(--text-fluid-md);
+    font-weight: var(--weight-medium);
+}
+
+.navbar ul {
+    display: flex;
+    margin: 0 auto;
+    align-items: center;
+    max-width: var(--bp-desktop);
+    
+}
+
+.title {
+    margin-right: auto; /*will cause the rest of the list go be pushed as far to the right as possible*/
+    font-size: var(--text-fluid-lg);
+    font-weight: var(--weight-bold);
+    letter-spacing: 0.5px;    
+}
+
+.navbar li:not(:first-child) {
+    margin-left: var(--spacing-xl);
+}
+
+.navbar li:not(:first-child):hover {
+    text-decoration: underline;
+}
+
 

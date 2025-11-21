@@ -193,6 +193,11 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
+ul, ol {
+  list-style: none;
+  padding-left: 0;
+}
+
 
 /*Utility classes*/
 .no-bullets {
