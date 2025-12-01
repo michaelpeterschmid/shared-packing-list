@@ -199,6 +199,40 @@ ul, ol {
 }
 
 
+
+/* forms */
+label {
+  display: block;
+  margin: var(--spacing-l)
+}
+label span {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+}
+input, textarea {
+  padding: var(--spacing-s) var(--spacing-xs);
+  font-size: 1em;
+  color: #777;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+textarea {
+  min-height: 160px;
+}
+
+.error {
+  color: red;
+  background: pink;
+  border: 1px solid red;
+  border-radius: 4px;
+  padding: var(--spacing-s);
+  margin: var(--spacing-m) 0px;
+}
+
+
+
 /*Utility classes*/
 .no-bullets {
   list-style: none;
