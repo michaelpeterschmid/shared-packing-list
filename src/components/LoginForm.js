@@ -1,9 +1,8 @@
 import React from "react";
-import styles from "./AuthForm.module.css";
 
 const LoginForm = () => {
   return (
-    <form className={styles["auth-form"]}>
+    <form>
       <label>
         <span>Email</span>
         <input type="email" required />

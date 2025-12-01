@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import styles from "./AuthForm.module.css";
 
 const SignupForm = () => {
   const [iconPreview, setIconPreview] = useState(null);
@@ -26,34 +25,11 @@ const SignupForm = () => {
   };
 
   return (
-    <form className={styles["auth-form"]}>
+    <form>
       <label>
         <span>Display name</span>
         <input type="text" required />
       </label>
-      <label className={styles["upload-button"]}>
-        Upload a profile picture{" "}
-        {/* Clicking the label triggers the hidden <input type="file"></input> */}
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleIconChange}
-          style={{ display: "none" }}
-        />
-      </label>
-
-      {iconPreview && (
-        <img
-          src={iconPreview}
-          alt="Profile preview"
-          style={{
-            width: 80,
-            height: 80,
-            borderRadius: "50%",
-            objectFit: "cover",
-          }}
-        />
-      )}
       <label>
         <span>Email</span>
         <input type="email" required />
