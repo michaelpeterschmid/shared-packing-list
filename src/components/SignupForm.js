@@ -1,44 +1,50 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useSignup } from "../hooks/useSignup";
 
 const SignupForm = () => {
-  const [iconPreview, setIconPreview] = useState(null);
-  const [iconFile, setIconFile] = useState(null);
-
-  const handleIconChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setIconFile(file);
-    setIconPreview(URL.createObjectURL(file)); //  built-in browser feature that creates a temporary URL that points to a file stored in memory.
-  };
-
   // revoke file stored in memory using a useEffect cleanup function
-  useEffect(() => {
-    return () => URL.revokeObjectURL(iconPreview);
-  }, [iconPreview]);
+  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const { signup, error, isPending } = useSignup();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // build FormData or send to backend / Firebase etc.
-    // const formData = new FormData();
-    // formData.append("icon", iconFile);
+    await signup(displayName, email, password);
   };
 
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <label>
         <span>Display name</span>
-        <input type="text" required />
+        <input
+          onChange={(e) => setDisplayName(e.target.value)}
+          value={displayName}
+          type="text"
+          required
+        />
       </label>
       <label>
         <span>Email</span>
-        <input type="email" required />
+        <input
+          type="email"
+          onChange={(e) => setEmail(e.target.value)}
+          value={email}
+          required
+        />
       </label>
       <label>
         <span>Password</span>
-        <input type="password" required />
+        <input
+          type="password"
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
       </label>
-      <button type="submit">Sign up</button>
+      {!isPending && <button>Sign up</button>}
+      {isPending && <button disabled>Loading...</button>}
+      {error && <p className="error">{error}</p>}
     </form>
   );
 };

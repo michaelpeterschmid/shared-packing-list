@@ -4,24 +4,22 @@ import Modal from "./Modal"; // adjust path to where you put Modal
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
 
+//hooks
+import { useLogout } from "../hooks/useLogout";
+import { useAuthContext } from "../hooks/useAuthContext";
+
 const Navbar = () => {
-  const [user, setUser] = useState(null);
-  const [authMode, setAuthMode] = useState(null); // "login" | "signup" | null
+  const { user } = useAuthContext();
+  const { logout } = useLogout(); // custom hook for logout
 
   const handleLogout = () => {
-    setUser(null);
+    logout();
   };
 
+  const [authMode, setAuthMode] = useState(null); // null, 'login', 'signup'
   const openLogin = () => setAuthMode("login");
   const openSignup = () => setAuthMode("signup");
   const closeModal = () => setAuthMode(null);
-
-  const handleFakeLogin = (e) => {
-    e.preventDefault();
-    // later: replace with Firebase auth
-    setUser({ name: "Michael" });
-    closeModal();
-  };
 
   return (
     <>
@@ -29,7 +27,7 @@ const Navbar = () => {
         {/* if user is not logged in */}
         {!user && (
           <ul>
-            <li className={styles.title}>ListMate</li>
+            <li className={styles.title}>ListMates</li>
             <li>
               <button type="button" onClick={openLogin}>
                 Login
@@ -46,8 +44,8 @@ const Navbar = () => {
         {/* if user is logged in  */}
         {user && (
           <ul>
-            <li className={styles.title}>ListMate</li>
-            <li>Profile</li>
+            <li className={styles.title}>ListMates</li>
+            <li>hi {user.displayName}</li>
             <li>
               <button type="button" onClick={handleLogout}>
                 Logout
@@ -57,7 +55,6 @@ const Navbar = () => {
         )}
       </nav>
 
-      {/* Auth modal */}
       {authMode && (
         <Modal
           title={authMode === "login" ? "Login" : "Create an account"}

@@ -231,6 +231,14 @@ textarea {
   margin: var(--spacing-m) 0px;
 }
 
+.loading {
+  color: var(--secondary-color);
+  background: var(--primary-color);
+  border: 1px solid var(--secondary-color);
+  border-radius: 4px;
+  padding: var(--spacing-s);
+  margin: var(--spacing-m) 0px;
+}
 
 
 /*Utility classes*/
