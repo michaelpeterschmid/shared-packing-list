@@ -55,7 +55,7 @@ const Navbar = () => {
         )}
       </nav>
 
-      {authMode && (
+      {authMode && !user && (
         <Modal
           title={authMode === "login" ? "Login" : "Create an account"}
           onClose={closeModal}>

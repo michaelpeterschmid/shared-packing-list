@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useSignup } from "../hooks/useSignup";
+import { Navigate } from "react-router-dom";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const SignupForm = () => {
   // revoke file stored in memory using a useEffect cleanup function
@@ -9,10 +11,16 @@ const SignupForm = () => {
 
   const { signup, error, isPending } = useSignup();
 
+  const { user } = useAuthContext();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     await signup(displayName, email, password);
   };
+
+  if (user) {
+    return <Navigate to="/" replace></Navigate>;
+  }
 
   return (
     <form onSubmit={handleSubmit}>
