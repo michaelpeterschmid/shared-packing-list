@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { auth, db } from "../firebase/config";
 import { useAuthContext } from "./useAuthContext";
 
-import { doc, setDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 
 export const useLogout = () => {
@@ -18,7 +18,7 @@ export const useLogout = () => {
     try {
       //update the online status
       const { uid } = user;
-      await setDoc(doc(db, "users", uid), {
+      await updateDoc(doc(db, "users", uid), {
         online: false,
       });
 

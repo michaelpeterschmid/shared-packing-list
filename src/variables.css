@@ -1,6 +1,8 @@
 :root {
   /* colors */
-  --primary-bg-color: white;
+  --heading-color: #444;
+  --text-color: #999;
+  --primary-bg-color: whitesmoke;
   --primary-color: #dda15e;
   --secondary-color: #bc6c25;
   --text-color: #222222;

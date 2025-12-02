@@ -1,0 +1,121 @@
+.dashboard {
+    padding: var(--spacing-xxl)
+    
+}
+
+
+
+
+
+
+/*mobile first*/
+
+.list-div {
+    display: grid;
+    gap: var(--spacing-l);
+    grid-template-columns: repeat(1, 1fr);
+}
+
+/*Tablet*/
+@media screen and (min-width: 48rem) {
+    .list-div {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+}
+
+/*Desktop*/
+@media screen and (min-width: 64rem) {
+    .list-div {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+
+.holiday {
+  background: 
+    linear-gradient(
+      rgba(255, 255, 255, 0.6),   /* top transparent layer */
+      rgba(255, 255, 255, 0.6)
+    ),
+    url("./../../../public/img/holiday.png");
+  
+  background-size: cover;       /* scale to cover div */
+  background-position: center;  /* center the image */
+  background-repeat: no-repeat; /* avoid tiling */
+  
+}
+
+
+.shopping {
+  background: 
+    linear-gradient(
+      rgba(255, 255, 255, 0.7),   /* top transparent layer */
+      rgba(255, 255, 255, 0.7)
+    ),
+    url("./../../../public/img/shopping.jpg");
+  
+  background-size: cover;       /* scale to cover div */
+  background-position: center;  /* center the image */
+  background-repeat: no-repeat; /* avoid tiling */
+  
+}
+
+.todos {
+  background: 
+    linear-gradient(
+      rgba(255, 255, 255, 0.7),   /* top transparent layer */
+      rgba(255, 255, 255, 0.7)
+    ),
+    url("./../../../public/img/todo.png");
+  
+  background-size: cover;       /* scale to cover div */
+  background-position-x: center;  /* center the image */
+  background-position-y: top;
+  background-repeat: no-repeat; /* avoid tiling */
+  
+}
+
+
+.list{
+    border-radius: 1rem;
+    background-color: white;
+    padding: var(--spacing-m);
+}
+
+.list h4 {
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    color: var(--heading-color);
+}
+
+.list p {
+    margin-top: 0px;
+    padding-top: 0px;
+}
+
+.list ul {
+    margin-top: var(--spacing-s);
+    display: flex;
+    flex-wrap: wrap;   /* <-- this allows line breaks */
+
+}
+
+.list li {
+    padding-left: var(--spacing-xs);
+}
+
+.list li:not(:last-child)::after {
+    content: ", ";
+}
+
+
+
+.members {
+    margin-top: var(--spacing-m);
+    margin-bottom: var(--spacing-s);
+}
+
+.members p {
+    padding-top: var(--spacing-xs);
+}

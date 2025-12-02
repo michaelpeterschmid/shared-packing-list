@@ -12,8 +12,9 @@ const Navbar = () => {
   const { user } = useAuthContext();
   const { logout } = useLogout(); // custom hook for logout
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async() => {
+    await logout();
+    window.location.reload()
   };
 
   const [authMode, setAuthMode] = useState(null); // null, 'login', 'signup'

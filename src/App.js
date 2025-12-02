@@ -23,7 +23,7 @@ function App() {
             </Routes>
             {!user && (
               <p className="error">
-                Please sign in or log in to use this application.
+                Please sign up or log in to use this application.
               </p>
             )}
           </div>
