@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/dashboard/Dashboard";
 import List from "./pages/list/List";
+import ListItem from "./pages/listItem/ListItem";
 import Create from "./pages/create/Create";
 import LoginForm from "./components/LoginForm";
 
@@ -19,6 +20,9 @@ function App() {
             <Routes>
               <Route path="/" element={user && <Dashboard></Dashboard>}></Route>
               <Route path="/lists/:id" element={user && <List></List>}></Route>
+              <Route
+                path="/lists/:id/items/:itemid"
+                element={user && <ListItem></ListItem>}></Route>
               <Route path="/create" element={user && <Create></Create>}></Route>
             </Routes>
             {!user && (

@@ -3,6 +3,7 @@ import styles from "./Navbar.module.css";
 import Modal from "./Modal"; // adjust path to where you put Modal
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
+import { Link } from "react-router-dom";
 
 //hooks
 import { useLogout } from "../hooks/useLogout";
@@ -12,9 +13,8 @@ const Navbar = () => {
   const { user } = useAuthContext();
   const { logout } = useLogout(); // custom hook for logout
 
-  const handleLogout = async() => {
-    await logout();
-    window.location.reload()
+  const handleLogout = () => {
+    logout();
   };
 
   const [authMode, setAuthMode] = useState(null); // null, 'login', 'signup'
@@ -45,7 +45,11 @@ const Navbar = () => {
         {/* if user is logged in  */}
         {user && (
           <ul>
-            <li className={styles.title}>ListMates</li>
+            <li className={styles.title}>
+              <Link to="./" replace>
+                ListMates
+              </Link>
+            </li>
             <li>hi {user.displayName}</li>
             <li>
               <button type="button" onClick={handleLogout}>
@@ -56,7 +60,7 @@ const Navbar = () => {
         )}
       </nav>
 
-      {authMode && !user && (
+      {authMode && (
         <Modal
           title={authMode === "login" ? "Login" : "Create an account"}
           onClose={closeModal}>

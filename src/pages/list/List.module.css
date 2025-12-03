@@ -1,0 +1,46 @@
+.members ul{
+    display: flex;
+    
+}
+
+.members ul li:not(:last-child)::after{
+    content: ", ";
+    padding-right: var(--spacing-xs);
+}
+
+.list-metadata{
+    
+    padding: var(--spacing-l);
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: var(--spacing-xs) var(--spacing-xs) var(--spacing-s) rgba(0,0,0,0.05);
+    margin-bottom: var(--spacing-l);
+}
+
+.list {
+    margin: var(--spacing-xl);
+
+}
+
+.created-by, .last-updated, .category{
+    color: darkgray;
+}
+
+.members p {
+    font-weight: bolder;
+    color: darkgray
+}
+
+.owner-div {
+    margin-top: var(--spacing-l);
+}
+
+.item-div {
+    border-radius: 0.5rem;
+    padding: var(--spacing-s);
+    background-color: #fff;
+    box-shadow: var(--spacing-xs) var(--spacing-xs) var(--spacing-s) rgba(0,0,0,0.05);
+    margin-bottom: var(--spacing-l);
+}
+
+
