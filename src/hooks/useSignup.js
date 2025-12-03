@@ -1,3 +1,5 @@
+/* This hook encapsulates singup logic it returns an object that has a signup method and some states*/
+
 import { useState, useEffect, useRef } from "react";
 import { useAuthContext } from "./useAuthContext";
 

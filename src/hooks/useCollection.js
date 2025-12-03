@@ -1,3 +1,5 @@
+/*This hook encapsulates logic for reading a collection in realtime, it exports a method with parameters to read and conditionally query a collection. 
+This method either returns the documents or an error */
 import { useState, useEffect, useRef } from "react";
 import { db } from "../firebase/config.js";
 import {

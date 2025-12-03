@@ -1,3 +1,5 @@
+/*This hook encapsulates login logic it return an object with a login method and some state*/
+
 import { useState, useEffect, useRef } from "react";
 import { useAuthContext } from "./useAuthContext";
 

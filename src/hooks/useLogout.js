@@ -1,3 +1,4 @@
+/*This hook encapsulates logout logic it return an object with a logout method and some state*/
 import { useEffect, useState } from "react";
 import { auth, db } from "../firebase/config";
 import { useAuthContext } from "./useAuthContext";

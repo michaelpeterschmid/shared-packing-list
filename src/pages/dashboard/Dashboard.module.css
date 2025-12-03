@@ -16,6 +16,15 @@
     grid-template-columns: repeat(1, 1fr);
 }
 
+
+a{
+  color: inherit;
+  text-decoration: none;
+}
+
+
+
+
 /*Tablet*/
 @media screen and (min-width: 48rem) {
     .list-div {

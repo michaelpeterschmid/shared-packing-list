@@ -3,6 +3,7 @@ import styles from "./Dashboard.module.css";
 
 // custom hook
 import { useCollection } from "../../hooks/useCollection";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const { documents, error } = useCollection("lists");
@@ -23,7 +24,8 @@ const Dashboard = () => {
           const typeClass = typeClasses[list.category] || "";
           
           return (
-            <div key={list.id} className={`${styles.list} ${typeClass}`}>
+            <Link key={list.id} to={`/lists/${list.id}`} >
+            <div className={`${styles.list} ${typeClass}`}>
               <h4>{list.title}</h4>
               <p>category: {list.category}</p>
               <div className={styles.members}>
@@ -35,6 +37,7 @@ const Dashboard = () => {
                 </ul>
               </div>
             </div>
+            </Link>
           );
         })}
 

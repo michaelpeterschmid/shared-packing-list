@@ -18,7 +18,7 @@ function App() {
             <Navbar> </Navbar>
             <Routes>
               <Route path="/" element={user && <Dashboard></Dashboard>}></Route>
-              <Route path="/list/:id" element={user && <List></List>}></Route>
+              <Route path="/lists/:id" element={user && <List></List>}></Route>
               <Route path="/create" element={user && <Create></Create>}></Route>
             </Routes>
             {!user && (
