@@ -1,4 +1,4 @@
-/* This hook encapsulates singup logic it returns an object that has a signup method and some states*/
+/* This hook encapsulates signup logic; it returns an object with a signup method and some state */
 
 import { useState, useEffect, useRef } from "react";
 import { useAuthContext } from "./useAuthContext";
@@ -7,7 +7,12 @@ import { useAuthContext } from "./useAuthContext";
 import { auth, db } from "../firebase/config";
 
 // firebase auth functions
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 
 // firestore functions
 import { doc, setDoc, Timestamp } from "firebase/firestore";
@@ -29,10 +34,8 @@ export const useSignup = () => {
         throw new Error("Could not complete signup");
       }
 
-      await updateProfile(res.user, {
-        displayName,
-      });
-      //create or overwrite a doc
+      await updateProfile(res.user, { displayName });
+
       await setDoc(doc(db, "users", res.user.uid), {
         online: true,
         displayName,
@@ -41,13 +44,46 @@ export const useSignup = () => {
 
       dispatch({ type: "LOGIN", payload: res.user });
 
-      if (!isCancelled) {
+      if (!isCancelled.current) {
         setIsPending(false);
         setError(null);
       }
     } catch (error) {
-      setIsPending(false);
-      setError(error.code);
+      if (!isCancelled.current) {
+        setIsPending(false);
+        setError(error.code || error.message);
+      }
+    }
+  };
+
+  const signupWithGoogle = async () => {
+    setError(null);
+    setIsPending(true);
+
+    try {
+      const res = await signInWithPopup(auth, new GoogleAuthProvider());
+
+      if (!res) {
+        throw new Error("Could not complete signup");
+      }
+
+      await setDoc(doc(db, "users", res.user.uid), {
+        online: true,
+        displayName: res.user.displayName,
+        lastLogin: Timestamp.fromDate(new Date()),
+      });
+
+      dispatch({ type: "LOGIN", payload: res.user });
+
+      if (!isCancelled.current) {
+        setIsPending(false);
+        setError(null);
+      }
+    } catch (error) {
+      if (!isCancelled.current) {
+        setIsPending(false);
+        setError(error.code || error.message);
+      }
     }
   };
 
@@ -58,5 +94,5 @@ export const useSignup = () => {
     };
   }, []);
 
-  return { signup, error, isPending };
+  return { signup, signupWithGoogle, error, isPending };
 };

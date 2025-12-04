@@ -1,5 +1,5 @@
-/*This hook encapsulates logout logic it return an object with a logout method and some state*/
-import { useEffect, useState } from "react";
+/* This hook encapsulates logout logic: it returns an object with a logout method and some state */
+import { useEffect, useRef, useState } from "react";
 import { auth, db } from "../firebase/config";
 import { useAuthContext } from "./useAuthContext";
 
@@ -7,43 +7,45 @@ import { doc, updateDoc } from "firebase/firestore";
 import { signOut } from "firebase/auth";
 
 export const useLogout = () => {
-  const [isCancelled, setIsCancelled] = useState(false);
+  const isCancelled = useRef(false);
   const [error, setError] = useState(null);
   const [isPending, setIsPending] = useState(false);
   const { dispatch, user } = useAuthContext();
 
   const logout = async () => {
+    //: guard if somehow called without user
+    if (!user) return;
+
     setError(null);
     setIsPending(true);
 
     try {
-      //update the online status
-      const { uid } = user;
-      await updateDoc(doc(db, "users", uid), {
+      dispatch({ type: "LOGOUT" });
+
+      await signOut(auth);
+
+      await updateDoc(doc(db, "users", user.uid), {
         online: false,
       });
 
-      // sign the user out
-      await signOut(auth);
-
-      // dispatch logout action
-      dispatch({ type: "LOGOUT" });
-
-      // update state
-      if (!isCancelled) {
+      if (!isCancelled.current) {
         setIsPending(false);
         setError(null);
       }
     } catch (err) {
-      if (!isCancelled) {
-        setError(err.message);
+      if (!isCancelled.current) {
+        console.error("Logout error:", err);
+        setError(err.code || err.message);
         setIsPending(false);
       }
     }
   };
 
   useEffect(() => {
-    return () => setIsCancelled(true);
+    isCancelled.current = false;
+    return () => {
+      isCancelled.current = true;
+    };
   }, []);
 
   return { logout, error, isPending };

@@ -13,8 +13,8 @@ const Navbar = () => {
   const { user } = useAuthContext();
   const { logout } = useLogout(); // custom hook for logout
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async() => {
+    await logout();
   };
 
   const [authMode, setAuthMode] = useState(null); // null, 'login', 'signup'
@@ -60,7 +60,7 @@ const Navbar = () => {
         )}
       </nav>
 
-      {authMode && (
+      {authMode && !user && (
         <Modal
           title={authMode === "login" ? "Login" : "Create an account"}
           onClose={closeModal}>

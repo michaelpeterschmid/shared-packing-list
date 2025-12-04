@@ -7,7 +7,12 @@ import { useAuthContext } from "./useAuthContext";
 import { auth, db } from "../firebase/config";
 
 // firebase auth functions
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  getAdditionalUserInfo,
+} from "firebase/auth";
 
 // firestore functions
 import { doc, setDoc, Timestamp } from "firebase/firestore";
@@ -57,5 +62,45 @@ export const useLogin = () => {
     }
   };
 
-  return { login, error, isPending };
+  const loginWithGoogle = async () => {
+    setError(null);
+    setIsPending(true);
+
+    try {
+      const res = await signInWithPopup(auth, new GoogleAuthProvider());
+      const info = getAdditionalUserInfo(res);
+
+      //block new google accounts since we assumen here that there is already a firestore document for the user ready
+      if (info?.isNewUser) {
+        // Immediately sign them out
+        await auth.signOut();
+        throw new Error(
+          "This Google account is not registered. Go to signup first."
+        );
+      }
+
+      // update auth context
+      dispatch({ type: "LOGIN", payload: res.user });
+
+      // update firestore user doc
+      await setDoc(doc(db, "users", res.user.uid), {
+        online: true,
+        lastLogin: Timestamp.fromDate(new Date()),
+      });
+
+      if (!isCancelled.current) {
+        setIsPending(false);
+        setError(null);
+      }
+    } catch (err) {
+      if (!isCancelled.current) {
+        setError(err.code || err.message);
+        setIsPending(false);
+      }
+    } finally {
+      console.log("login finished");
+    }
+  };
+
+  return { login, loginWithGoogle, error, isPending };
 };
