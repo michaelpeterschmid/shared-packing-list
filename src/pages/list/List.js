@@ -79,7 +79,9 @@ const List = () => {
         </Link>
       ))}
 
-      <div className={styles.comments}></div>
+      {documents.length == 0 && <p className="error">No items so far.</p>}
+
+      <div className={styles.comments}> </div>
     </div>
   );
 };

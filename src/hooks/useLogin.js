@@ -15,7 +15,7 @@ import {
 } from "firebase/auth";
 
 // firestore functions
-import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { doc, updateDoc, Timestamp } from "firebase/firestore";
 
 export const useLogin = () => {
   const [error, setError] = useState(null);
@@ -43,7 +43,7 @@ export const useLogin = () => {
       dispatch({ type: "LOGIN", payload: res.user });
 
       // update firestore user doc
-      await setDoc(doc(db, "users", res.user.uid), {
+      await updateDoc(doc(db, "users", res.user.uid), {
         online: true,
         lastLogin: Timestamp.fromDate(new Date()),
       });
@@ -83,7 +83,7 @@ export const useLogin = () => {
       dispatch({ type: "LOGIN", payload: res.user });
 
       // update firestore user doc
-      await setDoc(doc(db, "users", res.user.uid), {
+      await updateDoc(doc(db, "users", res.user.uid), {
         online: true,
         lastLogin: Timestamp.fromDate(new Date()),
       });

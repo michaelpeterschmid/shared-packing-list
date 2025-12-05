@@ -1,0 +1,8 @@
+.item-details {   
+    margin: var(--spacing-l); 
+    padding: var(--spacing-l);
+    background-color: #fff;
+    border-radius: 0.5rem;
+    box-shadow: var(--spacing-xs) var(--spacing-xs) var(--spacing-s) rgba(0,0,0,0.05);
+    margin-bottom: var(--spacing-l);
+}

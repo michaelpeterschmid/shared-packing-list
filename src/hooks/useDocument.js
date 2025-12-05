@@ -13,6 +13,7 @@ export const useDocument = (colName, id) => {
   const [document, setDocument] = useState(null);
   const [error, setError] = useState(null);
 
+
   useEffect(() => {
     let ref = doc(db, colName, id);
 
