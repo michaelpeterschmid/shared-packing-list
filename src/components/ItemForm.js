@@ -15,7 +15,7 @@ const ItemForm = ({ initialValues, onSubmit }) => {
     <form onSubmit={handleSubmit}>
       <label>
         Title
-        <input value={title} onChange={(e) => setTitle(e.target.value)} />
+        <input value={title} onChange={(e) => setTitle(e.target.value)} required />
       </label>
       <label>
         Description

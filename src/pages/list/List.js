@@ -1,7 +1,7 @@
 import styles from "./List.module.css";
 
 import React, { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 //custom hook to read a document in realtime
 import { useDocument } from "../../hooks/useDocument.js";
@@ -14,8 +14,10 @@ import { useAuthContext } from "../../hooks/useAuthContext.js";
 import { useCollection } from "../../hooks/useCollection.js";
 import { hasModifyRights } from "../../hooks/useHasModifyRights.js";
 
+
 //components to add items, update or delete entire list
 import Modal from "../../components/Modal.js";
+import ConfirmDeleteModal from "../../components/ConfirmDeleteModal.js";
 import ItemForm from "../../components/ItemForm.js";
 import { useFirestore } from "../../hooks/useFirestore.js";
 
@@ -24,6 +26,7 @@ const List = () => {
   const { id } = useParams();
   const { document, error } = useDocument("lists", id);
   const { documents } = useCollection(`lists/${id}/items`);
+  const navigate = useNavigate()
 
   const getOwner = () => {
     return document.users.find((user) => {
@@ -31,8 +34,37 @@ const List = () => {
     });
   };
 
+  
+  const {
+    updateDocument: updateList,
+    deleteDocument: deleteList,
+    response: listResponse,
+  } = useFirestore("lists");
+
+  //deleting a list
+
+  const [deleteModalIsActive, setDeleteModalIsActive] = useState(false);
+
+  const handleDeleteClick = () => {
+    setDeleteModalIsActive(true);
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteModalIsActive(false);
+  };
+
+  const handleConfirmDelete = async() => {
+    await deleteList(id);
+    navigate(`/lists/${id}`); // back to list
+  };
+
+
+  //updating a list
+
   //new Item handling
-  const { addDocument, response } = useFirestore(`lists/${id}/items`);
+  const { addDocument, response: itemResponse } = useFirestore(
+    `lists/${id}/items`
+  );
 
   const canCreateItems = hasModifyRights(document, user);
 
@@ -56,7 +88,7 @@ const List = () => {
       }
     }
     await addDocument(data);
-    setNewItemError(response.error);
+    setNewItemError(itemResponse.error);
     setNewItemModalIsActive(false);
   };
 
@@ -83,24 +115,34 @@ const List = () => {
           })}{" "}
         </p>
         <p className={styles.description}>{document.description}</p>
+        <p className={styles["member-paragraph"]}>Project members:</p>
         <div className={styles.members}>
-          <p>Project members:</p>
-          <ul>
-            {document.users.map((user) => (
-              <li key={user.userId}> {user.displayName}</li>
-            ))}
-          </ul>
-          {user.uid === getOwner()?.userId && (
-            <div className={styles["owner-div"]}>
-              <button>Delete list</button> <button>Modify list</button>
-            </div>
-          )}
+          {document.users.map((user) => (
+            <span className={styles.members} key={user.userId}>
+              {" "}
+              {user.displayName}
+            </span>
+          ))}
         </div>
+
+        {user.uid === getOwner()?.userId && (
+          <div className={styles["owner-div"]}>
+            <button onClick={handleDeleteClick}>Delete list</button>{" "}
+            <button>Modify list</button>
+            <ConfirmDeleteModal
+              isOpen={deleteModalIsActive}
+              onConfirm={handleConfirmDelete}
+              onCancel={handleCancelDelete}
+              deleteObject={
+                "entire list and all items & users"
+              }></ConfirmDeleteModal>
+          </div>
+        )}
       </div>
 
       <h3>List Items</h3>
       {canCreateItems && (
-        <>
+        <div className={styles["add-item"]}>
           <button onClick={handleClickAddNewItem}>Add new item</button>{" "}
           <br></br>
           <br></br>
@@ -110,7 +152,7 @@ const List = () => {
             </Modal>
           )}
           {newItemError && <p className="error">{newItemError}</p>}
-        </>
+        </div>
       )}
       <p>Click on item for details</p>
 

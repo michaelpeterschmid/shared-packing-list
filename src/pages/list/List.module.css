@@ -1,11 +1,11 @@
-.members ul{
-    display: flex;
-    
+
+
+.members :not(:last-child)::after{
+    content: ",";
 }
 
-.members ul li:not(:last-child)::after{
-    content: ", ";
-    padding-right: var(--spacing-xs);
+.members :last-child{
+    white-space: nowrap;
 }
 
 .list-metadata{
@@ -26,7 +26,7 @@
     color: darkgray;
 }
 
-.members p {
+.member-paragraph {
     font-weight: bolder;
     color: darkgray
 }
@@ -43,4 +43,11 @@
     margin-bottom: var(--spacing-l);
 }
 
+
+.add-item {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+
+}
 
