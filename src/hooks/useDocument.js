@@ -5,14 +5,13 @@ This method either returns the documents or an error */
 doc() creates a reference to a Firestore document.
 getDoc() reads a Firestore document one time and returns a snapshot. 
 */
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { db } from "../firebase/config.js";
 import { doc, onSnapshot } from "firebase/firestore";
 
 export const useDocument = (colName, id) => {
   const [document, setDocument] = useState(null);
   const [error, setError] = useState(null);
-
 
   useEffect(() => {
     let ref = doc(db, colName, id);

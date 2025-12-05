@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDocument } from "../../hooks/useDocument.js";
+import { hasModifyRights } from "../../hooks/useHasModifyRights.js";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 
 import styles from "./Listitem.module.css";
 import { useAuthContext } from "../../hooks/useAuthContext.js";
 import { useFirestore } from "../../hooks/useFirestore.js";
+import ConfirmDeleteModal from "../../components/ConfirmDeleteModal.js";
 import Modal from "../../components/Modal.js";
+import ItemForm from "../../components/ItemForm.js";
+import { useCollection } from "../../hooks/useCollection.js";
 
 const ListItem = () => {
   const { user } = useAuthContext();
@@ -20,26 +24,49 @@ const ListItem = () => {
   const { deleteDocument, updateDocument, response } = useFirestore(
     `lists/${id}/items`
   );
+  const { documents: listItems } = useCollection(`lists/${id}/items`);
 
-  const { document: listDoc, error: listError } = useDocument("lists", id);
+  const { document: listDoc } = useDocument("lists", id);
   const navigate = useNavigate();
 
-  
+  const canModify = hasModifyRights(listDoc, user);
 
   // ---- modal state ----
-  const [modalIsActive, setModalIsActive] = useState(false);
+  const [deleteModalIsActive, setDeleteModalIsActive] = useState(false);
+  const [modifyModalIsActive, setModifyModalIsActive] = useState(false);
+  const [modifyError, setModifyError] = useState(null);
 
   const handleDeleteClick = () => {
-    setModalIsActive(true);
+    setDeleteModalIsActive(true);
   };
 
   const handleCancelDelete = () => {
-    setModalIsActive(false);
+    setDeleteModalIsActive(false);
   };
 
   const handleConfirmDelete = async () => {
     await deleteDocument(itemid);
     navigate(`/lists/${id}`); // back to list
+  };
+
+  const handleModifyClick = () => {
+    setModifyModalIsActive(true);
+  };
+
+  const handleCancelModify = () => {
+    setModifyModalIsActive(false);
+  };
+  const handleConfirmModify = async (data) => {
+    for (const item of listItems) {
+      if (item.title.toLowerCase().trim() === data.title.toLowerCase().trim()) {
+        setModifyError("An item with that title already exists.");
+        setModifyModalIsActive(false);
+        return;
+      }
+    }
+    await updateDocument(itemid, data);
+    setModifyError(response.error);
+    setModifyModalIsActive(false);
   };
 
   if (itemError) {
@@ -61,32 +88,37 @@ const ListItem = () => {
 
         <h5>Last updated</h5>
         <p>
-          {formatDistanceToNow(itemDoc.updatedAt.toDate(), {
-            addSuffix: true,
-          })}{" "}
+          {itemDoc.updatedAt?.toDate
+            ? formatDistanceToNow(itemDoc.updatedAt.toDate(), {
+                addSuffix: true,
+              })
+            : "just now"}{" "}
           by {itemDoc.updatedBy}
         </p>
       </div>
 
-      {hasModifyRights() && (
+      {canModify && (
         <>
           {!response.isPending && (
             <>
-              <button>Modify</button>{" "}
+              <button onClick={handleModifyClick}>Modify</button>{" "}
               <button onClick={handleDeleteClick}>Delete</button>
             </>
           )}
-          {response.error && <p className="error">{response.error}</p>}
+          {modifyError && <p className="error">{modifyError}</p>}
         </>
       )}
 
-      {modalIsActive && (
-        <Modal onClose={handleCancelDelete} title="Confirm delete">
-          <p>Do you really want to delete this item?</p>
-          <button onClick={handleConfirmDelete} disabled={response.isPending}>
-            Confirm
-          </button>{" "}
-          <button onClick={handleCancelDelete}>Cancel</button>
+      <ConfirmDeleteModal
+        isOpen={deleteModalIsActive}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        deleteObject={"item"}></ConfirmDeleteModal>
+      {modifyModalIsActive && (
+        <Modal title="Update Item" onClose={handleCancelModify}>
+          <ItemForm
+            initialValues={itemDoc}
+            onSubmit={handleConfirmModify}></ItemForm>
         </Modal>
       )}
     </div>

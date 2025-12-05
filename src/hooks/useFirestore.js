@@ -1,8 +1,18 @@
 // this hook lets us add, update and delete documents
 
 import { useReducer, useEffect, useRef } from "react";
-import { db, timestamp } from "../firebase/config";
-import { doc, addDoc, updateDoc, deleteDoc, collection } from "firebase/firestore";
+import { db } from "../firebase/config";
+import {
+  doc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  collection,
+  serverTimestamp,
+} from "firebase/firestore";
+import { useAuthContext } from "./useAuthContext";
+
+
 
 const initialState = {
   isPending: false,
@@ -27,6 +37,7 @@ const firestoreReducer = (state, action) => {
 };
 
 export const useFirestore = (colName) => {
+  const { user } = useAuthContext();
   const [response, dispatch] = useReducer(firestoreReducer, initialState);
   const isCancelled = useRef(false);
 
@@ -45,12 +56,17 @@ export const useFirestore = (colName) => {
     dispatch({ type: "IS_PENDING" });
 
     try {
-      const createdAt = timestamp.fromDate(new Date());
-      const addedDocRef = await addDoc(ref, { ...docData, createdAt });
+      const updatedAt = serverTimestamp();
+      const updatedBy = user.displayName;
+      const addedDocRef = await addDoc(ref, {
+        ...docData,
+        updatedAt,
+        updatedBy,
+      });
 
       dispatchIfNotCancelled({ type: "SUCCESS" });
 
-      // falls du die ID brauchst (z.B. zum Navigieren)
+      // falls die ID gebraucht wird (z.B. zum Navigieren)
       return addedDocRef;
     } catch (err) {
       dispatchIfNotCancelled({ type: "ERROR", payload: err.message });
@@ -77,7 +93,13 @@ export const useFirestore = (colName) => {
     dispatch({ type: "IS_PENDING" });
 
     try {
-      await updateDoc(doc(ref, id), updates);
+      const updatedAt = serverTimestamp();
+      const updatedBy = user.displayName;
+      await updateDoc(doc(ref, id), {
+        ...updates,
+        updatedAt,
+        updatedBy,
+      });
 
       dispatchIfNotCancelled({ type: "SUCCESS" });
       return true;
@@ -90,11 +112,14 @@ export const useFirestore = (colName) => {
     }
   };
 
-  useEffect(() => {
-    return () => {
-      isCancelled.current = true;
-    };
-  }, []);
+useEffect(() => {
+  isCancelled.current = false;   // important in StrictMode because React mounts component, runs effects, then immediately runs the cleanup function to simulate unmounts, and then runs the effect again, which causes the isCancelled.current to be true without this line!
+
+  return () => {
+    isCancelled.current = true;
+  };
+}, []);
+
 
   return { addDocument, deleteDocument, updateDocument, response };
 };

@@ -1,6 +1,6 @@
 import styles from "./List.module.css";
 
-import React from "react";
+import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 //custom hook to read a document in realtime
@@ -12,6 +12,12 @@ import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 //user contect for conditional renderings
 import { useAuthContext } from "../../hooks/useAuthContext.js";
 import { useCollection } from "../../hooks/useCollection.js";
+import { hasModifyRights } from "../../hooks/useHasModifyRights.js";
+
+//components to add items, update or delete entire list
+import Modal from "../../components/Modal.js";
+import ItemForm from "../../components/ItemForm.js";
+import { useFirestore } from "../../hooks/useFirestore.js";
 
 const List = () => {
   const { user } = useAuthContext();
@@ -25,11 +31,40 @@ const List = () => {
     });
   };
 
+  //new Item handling
+  const { addDocument, response } = useFirestore(`lists/${id}/items`);
+
+  const canCreateItems = hasModifyRights(document, user);
+
+  const [newItemModalIsActive, setNewItemModalIsActive] = useState(false);
+  const [newItemError, setNewItemError] = useState(null);
+
+  const handleClickAddNewItem = () => {
+    setNewItemModalIsActive(true);
+  };
+
+  const handleCancleAddNewItem = () => {
+    setNewItemModalIsActive(false);
+  };
+
+  const handleConfirmAddNewItem = async (data) => {
+    for (const item of documents) {
+      if (item.title.toLowerCase().trim() === data.title.toLowerCase().trim()) {
+        setNewItemError("Item with same title already exists");
+        setNewItemModalIsActive(false);
+        return;
+      }
+    }
+    await addDocument(data);
+    setNewItemError(response.error);
+    setNewItemModalIsActive(false);
+  };
+
   if (error) {
     return <div className="error">{error}</div>;
   }
 
-  if (!document) {
+  if (!document || !documents) {
     return <p className="loading">Loading...</p>;
   }
 
@@ -64,6 +99,20 @@ const List = () => {
       </div>
 
       <h3>List Items</h3>
+      {canCreateItems && (
+        <>
+          <button onClick={handleClickAddNewItem}>Add new item</button>{" "}
+          <br></br>
+          <br></br>
+          {newItemModalIsActive && (
+            <Modal onClose={handleCancleAddNewItem} title={"Add new Item"}>
+              <ItemForm onSubmit={handleConfirmAddNewItem}></ItemForm>
+            </Modal>
+          )}
+          {newItemError && <p className="error">{newItemError}</p>}
+        </>
+      )}
+      <p>Click on item for details</p>
 
       {documents?.map((item) => (
         <Link to={`/lists/${id}/items/${item.id}`} key={item.id}>
@@ -71,15 +120,19 @@ const List = () => {
             <h4>{item.title}</h4>
             <p className={styles["last-updated"]}>
               Last update by: {item.updatedBy},{" "}
-              {formatDistanceToNow(item.updatedAt.toDate(), {
-                addSuffix: true,
-              })}{" "}
+              <span className="no-wrap">
+                {item.updatedAt
+                  ? formatDistanceToNow(item.updatedAt.toDate(), {
+                      addSuffix: true,
+                    })
+                  : "just now"}
+              </span>
             </p>
           </div>
         </Link>
       ))}
 
-      {documents.length == 0 && <p className="error">No items so far.</p>}
+      {documents?.length === 0 && <p className="error">No items so far.</p>}
 
       <div className={styles.comments}> </div>
     </div>
