@@ -13,7 +13,7 @@
   color: var(--text-color);
   padding: var(--spacing-m);
   border-radius: 8px;
-  min-width: 280px;
+  min-width: 50%;
   max-width: 90%;
   max-height: 90%;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);

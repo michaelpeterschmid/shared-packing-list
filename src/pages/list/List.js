@@ -55,7 +55,7 @@ const List = () => {
 
   const handleConfirmDelete = async () => {
     await deleteList(id);
-    navigate(`/lists/${id}`); // back to list
+    navigate("/"); // back to dashboard
   };
 
   //updating a list

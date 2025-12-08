@@ -46,7 +46,7 @@ const ListItem = () => {
 
   const handleConfirmDelete = async () => {
     await deleteDocument(itemid);
-    navigate(`/`); // back to dashboard
+    navigate(`/lists/${id}`); // back to list
   };
 
   const handleModifyClick = () => {
@@ -58,7 +58,10 @@ const ListItem = () => {
   };
   const handleConfirmModify = async (data) => {
     for (const item of listItems) {
-      if (item.title.toLowerCase().trim() === data.title.toLowerCase().trim() && item.id !== itemid)  {
+      if (
+        item.title.toLowerCase().trim() === data.title.toLowerCase().trim() &&
+        item.id !== itemid
+      ) {
         setModifyError("An item with that title already exists.");
         setModifyModalIsActive(false);
         return;

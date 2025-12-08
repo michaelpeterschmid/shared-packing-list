@@ -13,7 +13,7 @@ const Navbar = () => {
   const { user } = useAuthContext();
   const { logout } = useLogout(); // custom hook for logout
 
-  const handleLogout = async() => {
+  const handleLogout = async () => {
     await logout();
   };
 
@@ -50,7 +50,7 @@ const Navbar = () => {
                 ListMates
               </Link>
             </li>
-            <li>hi {user.displayName}</li>
+            {/* <li>hi {user.displayName}</li> */}
             <li>
               <button type="button" onClick={handleLogout}>
                 Logout

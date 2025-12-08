@@ -6,7 +6,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 const categories = [
   { value: "packing", label: "Packing" },
   { value: "shopping", label: "Shopping" },
-  { value: "todo", label: "Todo" },
+  { value: "todos", label: "Todos" },
   { value: "other", label: "Other" },
 ];
 
