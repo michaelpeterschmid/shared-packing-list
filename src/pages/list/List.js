@@ -67,7 +67,11 @@ const List = () => {
   const handleCancelModify = () => {
     setModifyModalIsActive(false);
   };
-  const handleConfirmModify = (data) => {};
+  const handleConfirmModify = async (data) => {
+    await updateList(id, data);
+    setModifyError(listResponse.error);
+    setModifyModalIsActive(false);
+  };
 
   //new Item handling
   const { addDocument, response: itemResponse } = useFirestore(
@@ -118,9 +122,11 @@ const List = () => {
         <p className={styles["category"]}>Category: {listDoc.category}</p>
         <p className={styles["last-updated"]}>
           Last updated{" "}
-          {formatDistanceToNow(listDoc.createdAt.toDate(), {
-            addSuffix: true,
-          })}{" "}
+          {listDoc.updatedAt
+            ? formatDistanceToNow(listDoc.updatedAt.toDate(), {
+                addSuffix: true,
+              })
+            : "just now"}{" "}
         </p>
         <p className={styles.description}>{listDoc.description}</p>
         <p className={styles["member-paragraph"]}>Project members:</p>
@@ -151,6 +157,7 @@ const List = () => {
                   onSubmit={handleConfirmModify}></ListForm>
               </Modal>
             )}
+            {modifyError && <p className="error">{modifyError}</p>}
           </div>
         )}
       </div>

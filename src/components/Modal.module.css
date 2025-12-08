@@ -14,8 +14,10 @@
   padding: var(--spacing-m);
   border-radius: 8px;
   min-width: 280px;
-  max-width: 420px;
+  max-width: 90%;
+  max-height: 90%;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  overflow-y: scroll; /*Allow scrolling*/
 }
 
 .header {

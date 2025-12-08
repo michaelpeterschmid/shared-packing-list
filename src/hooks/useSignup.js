@@ -39,6 +39,7 @@ export const useSignup = () => {
       await setDoc(doc(db, "users", res.user.uid), {
         online: true,
         displayName,
+        email: res.user.email,
         lastLogin: Timestamp.fromDate(new Date()),
       });
 
@@ -70,6 +71,7 @@ export const useSignup = () => {
       await setDoc(doc(db, "users", res.user.uid), {
         online: true,
         displayName: res.user.displayName,
+        email: res.user.email,
         lastLogin: Timestamp.fromDate(new Date()),
       });
 

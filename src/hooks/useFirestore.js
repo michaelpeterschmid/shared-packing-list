@@ -12,8 +12,6 @@ import {
 } from "firebase/firestore";
 import { useAuthContext } from "./useAuthContext";
 
-
-
 const initialState = {
   isPending: false,
   error: null,
@@ -104,6 +102,7 @@ export const useFirestore = (colName) => {
       dispatchIfNotCancelled({ type: "SUCCESS" });
       return true;
     } catch (error) {
+      console.log(error);
       dispatchIfNotCancelled({
         type: "ERROR",
         payload: error.message,
@@ -112,14 +111,13 @@ export const useFirestore = (colName) => {
     }
   };
 
-useEffect(() => {
-  isCancelled.current = false;   // important in StrictMode because React mounts component, runs effects, then immediately runs the cleanup function to simulate unmounts, and then runs the effect again, which causes the isCancelled.current to be true without this line!
+  useEffect(() => {
+    isCancelled.current = false; // important in StrictMode because React mounts component, runs effects, then immediately runs the cleanup function to simulate unmounts, and then runs the effect again, which causes the isCancelled.current to be true without this line!
 
-  return () => {
-    isCancelled.current = true;
-  };
-}, []);
-
+    return () => {
+      isCancelled.current = true;
+    };
+  }, []);
 
   return { addDocument, deleteDocument, updateDocument, response };
 };
