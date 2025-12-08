@@ -14,27 +14,27 @@ import { useAuthContext } from "../../hooks/useAuthContext.js";
 import { useCollection } from "../../hooks/useCollection.js";
 import { hasModifyRights } from "../../hooks/useHasModifyRights.js";
 
-
 //components to add items, update or delete entire list
 import Modal from "../../components/Modal.js";
+
 import ConfirmDeleteModal from "../../components/ConfirmDeleteModal.js";
 import ItemForm from "../../components/ItemForm.js";
+import ListForm from "../../components/ListForm.js";
 import { useFirestore } from "../../hooks/useFirestore.js";
 
 const List = () => {
   const { user } = useAuthContext();
   const { id } = useParams();
-  const { document, error } = useDocument("lists", id);
+  const { document: listDoc, error: listError } = useDocument("lists", id);
   const { documents } = useCollection(`lists/${id}/items`);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const getOwner = () => {
-    return document.users.find((user) => {
+    return listDoc.users.find((user) => {
       return user.accessRight === "o";
     });
   };
 
-  
   const {
     updateDocument: updateList,
     deleteDocument: deleteList,
@@ -53,20 +53,28 @@ const List = () => {
     setDeleteModalIsActive(false);
   };
 
-  const handleConfirmDelete = async() => {
+  const handleConfirmDelete = async () => {
     await deleteList(id);
     navigate(`/lists/${id}`); // back to list
   };
 
-
   //updating a list
+  const [modifyModalIsActive, setModifyModalIsActive] = useState(false);
+  const [modifyError, setModifyError] = useState(null);
+  const handleModifyClick = () => {
+    setModifyModalIsActive(true);
+  };
+  const handleCancelModify = () => {
+    setModifyModalIsActive(false);
+  };
+  const handleConfirmModify = (data) => {};
 
   //new Item handling
   const { addDocument, response: itemResponse } = useFirestore(
     `lists/${id}/items`
   );
 
-  const canCreateItems = hasModifyRights(document, user);
+  const canCreateItems = hasModifyRights(listDoc, user);
 
   const [newItemModalIsActive, setNewItemModalIsActive] = useState(false);
   const [newItemError, setNewItemError] = useState(null);
@@ -92,32 +100,32 @@ const List = () => {
     setNewItemModalIsActive(false);
   };
 
-  if (error) {
-    return <div className="error">{error}</div>;
+  if (listError) {
+    return <div className="error">{listError}</div>;
   }
 
-  if (!document || !documents) {
+  if (!listDoc || !documents) {
     return <p className="loading">Loading...</p>;
   }
 
   return (
     <div className={styles.list}>
       <div className={styles["list-metadata"]}>
-        <h4>{document.title}</h4>
+        <h4>{listDoc.title}</h4>
         <p className={styles["created-by"]}>
           Created by {getOwner()?.displayName}
         </p>
-        <p className={styles["category"]}>Category: {document.category}</p>
+        <p className={styles["category"]}>Category: {listDoc.category}</p>
         <p className={styles["last-updated"]}>
           Last updated{" "}
-          {formatDistanceToNow(document.createdAt.toDate(), {
+          {formatDistanceToNow(listDoc.createdAt.toDate(), {
             addSuffix: true,
           })}{" "}
         </p>
-        <p className={styles.description}>{document.description}</p>
+        <p className={styles.description}>{listDoc.description}</p>
         <p className={styles["member-paragraph"]}>Project members:</p>
         <div className={styles.members}>
-          {document.users.map((user) => (
+          {listDoc.users.map((user) => (
             <span className={styles.members} key={user.userId}>
               {" "}
               {user.displayName}
@@ -128,7 +136,7 @@ const List = () => {
         {user.uid === getOwner()?.userId && (
           <div className={styles["owner-div"]}>
             <button onClick={handleDeleteClick}>Delete list</button>{" "}
-            <button>Modify list</button>
+            <button onClick={handleModifyClick}>Modify list</button>
             <ConfirmDeleteModal
               isOpen={deleteModalIsActive}
               onConfirm={handleConfirmDelete}
@@ -136,6 +144,13 @@ const List = () => {
               deleteObject={
                 "entire list and all items & users"
               }></ConfirmDeleteModal>
+            {modifyModalIsActive && (
+              <Modal title={"Update List"} onClose={handleCancelModify}>
+                <ListForm
+                  initialValues={listDoc}
+                  onSubmit={handleConfirmModify}></ListForm>
+              </Modal>
+            )}
           </div>
         )}
       </div>
