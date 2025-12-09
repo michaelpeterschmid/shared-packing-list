@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Select from "react-select";
-import { useCollection } from "../hooks/useCollection";
+import CreatableSelect from "react-select/creatable";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../firebase/config";
 
 const categories = [
   { value: "packing", label: "Packing" },
@@ -18,37 +20,125 @@ const ListForm = ({ initialValues, onSubmit }) => {
     initialValues?.description || ""
   );
 
-  const [assingedReadUsers, setAssignedReadUsers] = useState(
-    (initialValues?.users || [])
-      .filter((user) => user.accessRight === "r")
-      .map((user) => ({ value: user, label: user.email }))
-  );
-
   const { user } = useAuthContext();
 
-  const owner = initialValues?.users.find((u) => u.accessRight === "o") || {
+  const owner = initialValues?.users?.find((u) => u.accessRight === "o") || {
     displayName: user.displayName,
     userId: user.uid,
     email: user.email,
     accessRight: "o",
   };
 
+  // assigned users as react-select options
+  const [assingedReadUsers, setAssignedReadUsers] = useState(
+    (initialValues?.users || [])
+      .filter((user) => user.accessRight === "r")
+      .map((user) => ({
+        value: user,
+        label: user.email,
+      }))
+  );
+
   const [assingedModifyUsers, setAssignedModifyUsers] = useState(
     (initialValues?.users || [])
       .filter((user) => user.accessRight === "m")
-      .map((user) => ({ value: user, label: user.email }))
+      .map((user) => ({
+        value: user,
+        label: user.email,
+      }))
   );
 
   const [formError, setFormError] = useState(null);
+  const [emailError, setEmailError] = useState(null);
 
   const categoryValue = categories.find((c) => c.value === category) || null;
 
-  const [unassignedUsers, setUnassignedUsers] = useState([]);
+  // ---- helper: lookup user by email in Firestore "users" collection ----
+  const findUserByEmail = async (email) => {
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed) return null;
+
+    const q = query(collection(db, "users"), where("email", "==", trimmed));
+    const snap = await getDocs(q);
+    if (snap.empty) return null;
+
+    const doc = snap.docs[0];
+    const data = doc.data();
+
+    return {
+      userId: doc.id,
+      displayName: data.displayName,
+      email: data.email,
+    };
+  };
+
+  const isAlreadyAssigned = (userId) => {
+    return (
+      assingedReadUsers.some((opt) => opt.value.userId === userId) ||
+      assingedModifyUsers.some((opt) => opt.value.userId === userId) ||
+      owner.userId === userId
+    );
+  };
+
+  // ---- handlers for READ users ----
+  const handleCreateReadUser = async (inputValue) => {
+    setEmailError(null);
+    const found = await findUserByEmail(inputValue);
+    if (!found) {
+      setEmailError("No user with this email exists.");
+      return;
+    }
+    if (isAlreadyAssigned(found.userId)) {
+      setEmailError("User is already part of this list.");
+      return;
+    }
+
+    setAssignedReadUsers((prev) => [
+      ...prev,
+      {
+        value: { ...found, accessRight: "r" },
+        label: found.displayName || found.email,
+      },
+    ]);
+  };
+
+  const handleChangeReadUsers = (options) => {
+    setAssignedReadUsers(options || []);
+  };
+
+  // ---- handlers for MODIFY users ----
+  const handleCreateModifyUser = async (inputValue) => {
+    setEmailError(null);
+    const found = await findUserByEmail(inputValue);
+    if (!found) {
+      setEmailError("No user with this email exists.");
+      return;
+    }
+    if (isAlreadyAssigned(found.userId)) {
+      setEmailError("User is already part of this list.");
+      return;
+    }
+
+    setAssignedModifyUsers((prev) => [
+      ...prev,
+      {
+        value: { ...found, accessRight: "m" },
+        label: found.displayName || found.email,
+      },
+    ]);
+  };
+
+  const handleChangeModifyUsers = (options) => {
+    setAssignedModifyUsers(options || []);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setFormError(null);
+    setEmailError(null);
+
     //the category select is required
-    if (category === "" || !category) {
+    if (!category) {
       setFormError("A category is required.");
       return;
     }
@@ -57,7 +147,7 @@ const ListForm = ({ initialValues, onSubmit }) => {
       ...assingedModifyUsers.map((user) => {
         return {
           displayName: user.value.displayName,
-          userId: user.value.id,
+          userId: user.value.userId,
           email: user.value.email,
           accessRight: "m",
         };
@@ -65,7 +155,7 @@ const ListForm = ({ initialValues, onSubmit }) => {
       ...assingedReadUsers.map((user) => {
         return {
           displayName: user.value.displayName,
-          userId: user.value.id,
+          userId: user.value.userId,
           email: user.value.email,
           accessRight: "r",
         };
@@ -73,28 +163,16 @@ const ListForm = ({ initialValues, onSubmit }) => {
       owner,
     ];
 
-    onSubmit({ category, title, description, users: assignedUserList });
+    const userIds = assignedUserList.map((user) => user.userId);
+
+    onSubmit({
+      category,
+      title,
+      description,
+      users: assignedUserList,
+      userIds,
+    });
   };
-
-  //Create readUserArray of objects
-  //user collection
-  const { documents: userDocs } = useCollection("users");
-
-  useEffect(() => {
-    if (!userDocs) return; //stop here if there are no documents
-
-    const includedUserEmailArray = [
-      ...assingedReadUsers?.map((user) => user.label),
-      ...assingedModifyUsers?.map((user) => user.label),
-      owner.email, //excluding the owner from selecting
-    ];
-    const unassignedUserObjectArray = userDocs
-      .filter((user) => !includedUserEmailArray.includes(user.email))
-      .map((user) => {
-        return { value: user, label: user.email };
-      });
-    setUnassignedUsers(unassignedUserObjectArray);
-  }, [userDocs, assingedModifyUsers, assingedReadUsers]);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -107,6 +185,7 @@ const ListForm = ({ initialValues, onSubmit }) => {
           required
         />
       </label>
+
       <label>
         <span>Category</span>
         <Select
@@ -115,6 +194,7 @@ const ListForm = ({ initialValues, onSubmit }) => {
           onChange={(option) => setCategory(option.value)}
         />
       </label>
+
       <label>
         <span>Description</span>
         <textarea
@@ -124,24 +204,35 @@ const ListForm = ({ initialValues, onSubmit }) => {
           required
         />
       </label>
+
       <label>
-        <span>Read Access Users</span>
-        <Select
+        <span>Read Access Users (type email, press Enter)</span>
+        <CreatableSelect
+          isMulti
           value={assingedReadUsers}
-          options={unassignedUsers}
-          onChange={(option) => setAssignedReadUsers(option)}
-          isMulti></Select>
+          onChange={handleChangeReadUsers}
+          onCreateOption={handleCreateReadUser}
+          options={[]} // no global user list
+          placeholder="Type email and press Enter"
+        />
       </label>
+
       <label>
-        <span>Modify Access Users</span>
-        <Select
+        <span>Modify Access Users (type email, press Enter)</span>
+        <CreatableSelect
+          isMulti
           value={assingedModifyUsers}
-          options={unassignedUsers}
-          onChange={(option) => setAssignedModifyUsers(option)}
-          isMulti></Select>
+          onChange={handleChangeModifyUsers}
+          onCreateOption={handleCreateModifyUser}
+          options={[]} // no global user list
+          placeholder="Type email and press Enter"
+        />
       </label>
-      <button>{initialValues ? "Update List" : "Create List"}</button>
+
+      {emailError && <p className="error">{emailError}</p>}
       {formError && <p className="error">{formError}</p>}
+
+      <button>{initialValues ? "Update List" : "Create List"}</button>
     </form>
   );
 };
