@@ -8,10 +8,16 @@ import { Link } from "react-router-dom";
 
 import Modal from "../../components/Modal";
 import ListForm from "../../components/ListForm";
-import { set } from "date-fns/fp";
+import ListFilter from "./ListFilter.js";
+import { useAuthContext } from "../../hooks/useAuthContext.js";
 
 const Dashboard = () => {
-  const { documents, error } = useCollection("lists");
+  const { user } = useAuthContext();
+  const { documents, error } = useCollection("lists", [
+    "userIds",
+    "array-contains",
+    user.uid,
+  ]);
 
   const typeClasses = {
     packing: styles.packing,
@@ -36,14 +42,42 @@ const Dashboard = () => {
     SetListModalIsActive(false);
   };
 
-  if (!documents) return <p className="error">Loading</p>;
+  //filter handling
+  const [currentFilter, setCurrentFilter] = useState("all");
+  const changeCurrentFilter = (newFilter) => {
+    setCurrentFilter(newFilter);
+  };
+
+  const lists = document
+    ? documents?.filter((document) => {
+        switch (currentFilter) {
+          case "all":
+            return true;
+          case "owned by me":
+            return document.users.some(
+              (u) => u.userId == user.uid && u.accessRight === "o"
+            );
+          case "shopping":
+          case "todos":
+          case "packing":
+          case "other":
+            return document.category === currentFilter;
+          default:
+            return true;
+        }
+      })
+    : null;
+
+  if (!lists) return <p className="error">Loading</p>;
   if (error) return <p className="error">{error}</p>;
 
   return (
     <div className={styles.dashboard}>
       <h2>Dashboard</h2>
-      <div>Filter</div>
       <div>
+        <ListFilter changeCurrentFilter={changeCurrentFilter}></ListFilter>
+      </div>
+      <div className={styles.newlist}>
         <button onClick={handleClickAddNewList}>Add New List</button>
         {listModalIsActive && (
           <Modal onClose={handleCancelAddNewList} title={"Add a new List"}>
@@ -56,7 +90,8 @@ const Dashboard = () => {
       </div>
 
       <div className={styles["list-div"]}>
-        {documents?.map((list) => {
+        {lists.length === 0 && <p>No Lists yet!</p>}
+        {lists?.map((list) => {
           const typeClass = typeClasses[list.category] || "";
 
           return (
@@ -76,37 +111,6 @@ const Dashboard = () => {
             </Link>
           );
         })}
-
-        {/* static examples */}
-        <div className={`${styles.list} ${styles.shopping}`}>
-          <h4>Einkäufe Familie Schmid</h4>
-          <p>Category: shopping-list</p>
-          <div className={styles.members}>
-            <p>Members:</p>
-            <ul>
-              <li>Michael</li>
-              <li>Gabriel</li>
-              <li>Peter</li>
-              <li>Therese</li>
-              <li>Joanna</li>
-            </ul>
-          </div>
-        </div>
-
-        <div className={`${styles.list} ${styles.todo}`}>
-          <h4>Griechenland Ferien</h4>
-          <p>Category: packing-list</p>
-          <div className={styles.members}>
-            <p>Members:</p>
-            <ul>
-              <li>Michael</li>
-              <li>Gabriel</li>
-              <li>Peter</li>
-              <li>Therese</li>
-              <li>Joanna</li>
-            </ul>
-          </div>
-        </div>
       </div>
     </div>
   );

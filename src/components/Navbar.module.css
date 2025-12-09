@@ -10,6 +10,7 @@
     padding: var(--spacing-m) var(--spacing-s);
     font-size: var(--text-fluid-md);
     font-weight: var(--weight-medium);
+    z-index: 100;
 }
 
 .navbar ul {
