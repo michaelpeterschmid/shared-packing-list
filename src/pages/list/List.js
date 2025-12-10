@@ -87,6 +87,7 @@ const List = () => {
             {listDoc.users.map((u) => (
               <span className={styles.members} key={u.userId}>
                 {u.displayName}
+                {u.userId === user.uid ? " (you)" : ""}
               </span>
             ))}
           </div>

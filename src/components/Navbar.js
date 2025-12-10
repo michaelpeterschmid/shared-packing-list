@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import styles from "./Navbar.module.css";
+import Home from "../assets/home.svg";
+
 import Modal from "./Modal"; // adjust path to where you put Modal
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
@@ -28,7 +30,11 @@ const Navbar = () => {
         {/* if user is not logged in */}
         {!user && (
           <ul>
-            <li className={styles.title}>ListMates</li>
+            <li className={styles.title}>
+              <Link to="./" replace>
+                <img src={Home} alt="icon" /> ListMates{" "}
+              </Link>
+            </li>
             <li>
               <button type="button" onClick={openLogin}>
                 Login
@@ -47,10 +53,10 @@ const Navbar = () => {
           <ul>
             <li className={styles.title}>
               <Link to="./" replace>
-                ListMates
+                <img src={Home} alt="icon" /> ListMates{" "}
               </Link>
             </li>
-            {/* <li>hi {user.displayName}</li> */}
+
             <li>
               <button type="button" onClick={handleLogout}>
                 Logout

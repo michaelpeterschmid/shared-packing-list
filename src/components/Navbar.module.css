@@ -21,15 +21,34 @@
     
 }
 
+
+
 .title {
+
     margin-right: auto; /*will cause the rest of the list go be pushed as far to the right as possible*/
     font-size: var(--text-fluid-lg);
-    font-weight: var(--weight-bold);
-    letter-spacing: 0.5px;    
+    font-weight: 600;
+    display: flex; /* sot that image and logo sit next to each other*/
+    align-items: center; /* ensures perfect vertical alignment */
 }
 
+.title a {
+    display: inline-flex; /* keep link on one line with flex behavior */
+    align-items: center;
+    text-decoration: none; /* optional */
+    color: inherit;        /* optional */
+}
+
+.title a img {
+    height: 1.7em;
+    width: auto;
+    margin-right: 0.2em;
+    margin-top: -0.3em; /* remove manual vertical offset */
+}
+
+
 .navbar li:not(:first-child) {
-    margin-left: var(--spacing-xl);
+    margin-left: var(--spacing-l);
 }
 
 .navbar li:not(:first-child):hover {
