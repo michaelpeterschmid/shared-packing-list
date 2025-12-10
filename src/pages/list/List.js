@@ -13,7 +13,7 @@ import Modal from "../../components/Modal.js";
 import ConfirmDeleteModal from "../../components/ConfirmDeleteModal.js";
 import ListForm from "../../components/ListForm.js";
 import ListItemsSection from "./ListItemsSection.js";
-import ListComments from "./ListComments.js"
+import ListComments from "./ListComments.js";
 
 const List = () => {
   const { user } = useAuthContext();
@@ -70,7 +70,7 @@ const List = () => {
         <div className={styles["list-metadata"]}>
           <h4>{listDoc.title}</h4>
           <p className={styles["created-by"]}>
-            Created by {owner?.displayName}
+            Created by {owner?.userId === user.uid ? "YOU" : owner?.displayName}
           </p>
           <p className={styles["category"]}>Category: {listDoc.category}</p>
           <p className={styles["last-updated"]}>

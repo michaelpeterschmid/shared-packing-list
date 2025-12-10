@@ -10,7 +10,7 @@ const filters = [
   { value: "todos", label: "Todos" },
   { value: "other", label: "Other" },
 ];
-let filterValue = { value: "all", label: "All" };
+
 
 const ListFilter = ({ changeCurrentFilter }) => {
   const [currentFilter, setCurrentFilter] = useState("all");
@@ -19,6 +19,7 @@ const ListFilter = ({ changeCurrentFilter }) => {
     setCurrentFilter(option.value);
     changeCurrentFilter(option.value);
   };
+  let filterValue = filters.find((filter) => filter.value === currentFilter)
 
   return (
     <div className={styles["list-filter"]}>

@@ -18,7 +18,9 @@ const ListItemsSection = ({ listId, listDoc }) => {
 
   // Items laden
   const { documents: items, error: itemsError } = useCollection(
-    `lists/${listId}/items`
+    `lists/${listId}/items`,
+    null,
+    ["updatedAt", "asc"]
   );
 
   // Firestore-Hook für Items
@@ -71,20 +73,6 @@ const ListItemsSection = ({ listId, listDoc }) => {
     <div>
       <h3>List Items</h3>
 
-      {canCreateItems && (
-        <div className={styles["add-item"]}>
-          <button onClick={handleClickAddNewItem}>Add new item</button>
-          <br />
-          <br />
-          {newItemModalIsActive && (
-            <Modal onClose={handleCancelAddNewItem} title="Add new Item">
-              <ItemForm onSubmit={handleConfirmAddNewItem} />
-            </Modal>
-          )}
-          {newItemError && <p className="error">{newItemError}</p>}
-        </div>
-      )}
-
       <p>Click on item for details</p>
 
       {items.map((item) => (
@@ -92,7 +80,10 @@ const ListItemsSection = ({ listId, listDoc }) => {
           <div className={styles["item-div"]}>
             <h4>{item.title}</h4>
             <p className={styles["last-updated"]}>
-              Last update by: {item.updatedBy},{" "}
+              Last update by{" "}
+              <span className="no-wrap">
+                {item.userId === user.uid ? "YOU" : item.updatedBy},{" "}
+              </span>
               <span className="no-wrap">
                 {item.updatedAt
                   ? formatDistanceToNow(item.updatedAt.toDate(), {
@@ -104,8 +95,20 @@ const ListItemsSection = ({ listId, listDoc }) => {
           </div>
         </Link>
       ))}
-
       {items.length === 0 && <p className="error">No items so far.</p>}
+      {canCreateItems && (
+        <div>
+          <button onClick={handleClickAddNewItem}>Add new item</button>
+          <br />
+          <br />
+          {newItemModalIsActive && (
+            <Modal onClose={handleCancelAddNewItem} title="Add new Item">
+              <ItemForm onSubmit={handleConfirmAddNewItem} />
+            </Modal>
+          )}
+          {newItemError && <p className="error">{newItemError}</p>}
+        </div>
+      )}
     </div>
   );
 };

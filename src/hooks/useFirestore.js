@@ -56,10 +56,12 @@ export const useFirestore = (colName) => {
     try {
       const updatedAt = serverTimestamp();
       const updatedBy = user.displayName;
+      const userId = user.uid;
       const addedDocRef = await addDoc(ref, {
         ...docData,
         updatedAt,
         updatedBy,
+        userId,
       });
 
       dispatchIfNotCancelled({ type: "SUCCESS" });
@@ -93,10 +95,12 @@ export const useFirestore = (colName) => {
     try {
       const updatedAt = serverTimestamp();
       const updatedBy = user.displayName;
+      const userId = user.uid;
       await updateDoc(doc(ref, id), {
         ...updates,
         updatedAt,
         updatedBy,
+        userId,
       });
 
       dispatchIfNotCancelled({ type: "SUCCESS" });

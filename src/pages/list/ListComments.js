@@ -8,7 +8,9 @@ import { useFirestore } from "../../hooks/useFirestore";
 
 const ListComments = ({ listId }) => {
   const { documents: comments, error: commentsError } = useCollection(
-    `lists/${listId}/comments`
+    `lists/${listId}/comments`,
+    null,
+    ["updatedAt", "asc"]
   );
 
   const { addDocument: addComment, response } = useFirestore(
@@ -27,7 +29,7 @@ const ListComments = ({ listId }) => {
       setSubmitError("Can't send empty message.");
       return;
     }
-    await addComment({ content: comment, userId: user.uid });
+    await addComment({ content: comment });
     setSubmitError(response.error);
     setComment("");
   };
@@ -38,6 +40,14 @@ const ListComments = ({ listId }) => {
     return (
       <div>
         <p>Loading Commments..</p>
+      </div>
+    );
+  }
+
+  if (commentsError) {
+    return (
+      <div>
+        <p className="error">{commentsError}</p>
       </div>
     );
   }

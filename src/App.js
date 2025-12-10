@@ -6,8 +6,6 @@ import Navbar from "./components/Navbar";
 import Dashboard from "./pages/dashboard/Dashboard";
 import List from "./pages/list/List";
 import ListItem from "./pages/listItem/ListItem";
-import Create from "./pages/create/Create";
-import LoginForm from "./components/LoginForm";
 
 function App() {
   const { authIsReady, user } = useAuthContext();
@@ -23,7 +21,6 @@ function App() {
               <Route
                 path="/lists/:id/items/:itemid"
                 element={user && <ListItem></ListItem>}></Route>
-              <Route path="/create" element={user && <Create></Create>}></Route>
             </Routes>
             {!user && (
               <p className="error">

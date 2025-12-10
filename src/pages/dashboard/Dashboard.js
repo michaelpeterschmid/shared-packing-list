@@ -55,7 +55,7 @@ const Dashboard = () => {
             return true;
           case "owned by me":
             return document.users.some(
-              (u) => u.userId == user.uid && u.accessRight === "o"
+              (u) => u.userId === user.uid && u.accessRight === "o"
             );
           case "shopping":
           case "todos":

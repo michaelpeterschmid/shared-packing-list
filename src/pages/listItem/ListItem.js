@@ -96,7 +96,7 @@ const ListItem = () => {
                 addSuffix: true,
               })
             : "just now"}{" "}
-          by {itemDoc.updatedBy}
+          by {user.uid === itemDoc.userId ? "YOU" : itemDoc.updatedBy}
         </p>
       </div>
 
