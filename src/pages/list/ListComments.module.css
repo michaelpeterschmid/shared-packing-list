@@ -1,0 +1,28 @@
+.comment-div-received {
+    border-radius: 0.5rem;
+    padding: var(--spacing-s);
+    background-color: #fff;
+    margin-bottom: var(--spacing-m);
+}
+
+.comment-div-sent {
+    border-radius: 0.5rem;
+    padding: var(--spacing-s);
+    background-color: #afffb5;
+    margin-bottom: var(--spacing-m);
+}
+
+
+.comment-date {
+    color: darkgray;
+    
+}
+
+.comment-form label {
+    margin: 0px; /*Reset default label margin*/
+}
+
+.comment-form textarea {
+    min-height: auto; /*prevents from beign to high in the beginning*/
+}
+

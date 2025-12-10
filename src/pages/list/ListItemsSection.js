@@ -13,7 +13,6 @@ import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import Modal from "../../components/Modal.js";
 import ItemForm from "../../components/ItemForm.js";
 
-
 const ListItemsSection = ({ listId, listDoc }) => {
   const { user } = useAuthContext();
 
@@ -46,8 +45,7 @@ const ListItemsSection = ({ listId, listDoc }) => {
     if (items) {
       for (const item of items) {
         if (
-          item.title.toLowerCase().trim() ===
-          data.title.toLowerCase().trim()
+          item.title.toLowerCase().trim() === data.title.toLowerCase().trim()
         ) {
           setNewItemError("Item with same title already exists");
           setNewItemModalIsActive(false);
@@ -91,8 +89,6 @@ const ListItemsSection = ({ listId, listDoc }) => {
 
       {items.map((item) => (
         <Link to={`/lists/${listId}/items/${item.id}`} key={item.id}>
-
-
           <div className={styles["item-div"]}>
             <h4>{item.title}</h4>
             <p className={styles["last-updated"]}>
@@ -105,8 +101,7 @@ const ListItemsSection = ({ listId, listDoc }) => {
                   : "just now"}
               </span>
             </p>
-          </div> 
-
+          </div>
         </Link>
       ))}
 

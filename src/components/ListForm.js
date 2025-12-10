@@ -206,7 +206,10 @@ const ListForm = ({ initialValues, onSubmit }) => {
       </label>
 
       <label>
-        <span>Read Access Users (type email, press Enter)</span>
+        <span>
+          Read Access Users <br /> (type exact email, press Enter before
+          updating list)
+        </span>
         <CreatableSelect
           id="assignedReadUsers"
           autoComplete="off"
@@ -220,7 +223,10 @@ const ListForm = ({ initialValues, onSubmit }) => {
       </label>
 
       <label>
-        <span>Modify Access Users (type email, press Enter)</span>
+        <span>
+          Modify Access Users <br /> (type exact email, press Enter before
+          updating list)
+        </span>
         <CreatableSelect
           id="assignedWriteUsers"
           autoComplete="off"

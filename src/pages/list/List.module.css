@@ -1,13 +1,22 @@
+.list {
+    margin: var(--spacing-xl);
+    display: grid;
+    grid-template-columns: 1fr;
 
-
-.members :not(:last-child)::after{
-    content: ",";
 }
 
-.members :last-child{
-    white-space: nowrap;
+/*On desktop screensize list comments should be on a seperate column*/
+
+@media screen and (min-width: 64rem ){
+    .list {
+        grid-template-columns: 3fr 2fr;
+        grid-gap: var(--spacing-xl)
+    }
+    
 }
 
+
+/*List Metadata styles*/
 .list-metadata{
     
     padding: var(--spacing-l);
@@ -17,9 +26,12 @@
     margin-bottom: var(--spacing-l);
 }
 
-.list {
-    margin: var(--spacing-xl);
+.members :not(:last-child)::after{
+    content: ", ";
+}
 
+.members :last-child{
+    white-space: nowrap;
 }
 
 .created-by, .last-updated, .category{
@@ -34,6 +46,10 @@
 .owner-div {
     margin-top: var(--spacing-l);
 }
+
+
+
+/*ListItems styles*/
 
 .item-div {
     border-radius: 0.5rem;

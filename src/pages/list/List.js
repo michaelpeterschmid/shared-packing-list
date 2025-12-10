@@ -12,7 +12,8 @@ import { useFirestore } from "../../hooks/useFirestore.js";
 import Modal from "../../components/Modal.js";
 import ConfirmDeleteModal from "../../components/ConfirmDeleteModal.js";
 import ListForm from "../../components/ListForm.js";
-import ListItemsSection from "./ListItemsSection.js"; // NEU
+import ListItemsSection from "./ListItemsSection.js";
+import ListComments from "./ListComments.js"
 
 const List = () => {
   const { user } = useAuthContext();
@@ -65,54 +66,59 @@ const List = () => {
 
   return (
     <div className={styles.list}>
-      <div className={styles["list-metadata"]}>
-        <h4>{listDoc.title}</h4>
-        <p className={styles["created-by"]}>Created by {owner?.displayName}</p>
-        <p className={styles["category"]}>Category: {listDoc.category}</p>
-        <p className={styles["last-updated"]}>
-          Last updated{" "}
-          {listDoc.updatedAt
-            ? formatDistanceToNow(listDoc.updatedAt.toDate(), {
-                addSuffix: true,
-              })
-            : "just now"}{" "}
-        </p>
-        <p className={styles.description}>{listDoc.description}</p>
-        <p className={styles["member-paragraph"]}>Project members:</p>
-        <div className={styles.members}>
-          {listDoc.users.map((u) => (
-            <span className={styles.members} key={u.userId}>
-              {u.displayName}
-            </span>
-          ))}
-        </div>
-        {user.uid === owner?.userId && (
-          <div className={styles["owner-div"]}>
-            <button onClick={handleDeleteClick}>Delete list</button>{" "}
-            <button onClick={handleModifyClick}>Modify list</button>
-            <ConfirmDeleteModal
-              isOpen={deleteModalIsActive}
-              onConfirm={handleConfirmDelete}
-              onCancel={handleCancelDelete}
-              deleteObject="entire list and all items & users"
-            />
-            {modifyModalIsActive && (
-              <Modal title="Update List" onClose={handleCancelModify}>
-                <ListForm
-                  initialValues={listDoc}
-                  onSubmit={handleConfirmModify}
-                />
-              </Modal>
-            )}
-            {modifyError && <p className="error">{modifyError}</p>}
+      <div className={styles["list-details"]}>
+        <div className={styles["list-metadata"]}>
+          <h4>{listDoc.title}</h4>
+          <p className={styles["created-by"]}>
+            Created by {owner?.displayName}
+          </p>
+          <p className={styles["category"]}>Category: {listDoc.category}</p>
+          <p className={styles["last-updated"]}>
+            Last updated{" "}
+            {listDoc.updatedAt
+              ? formatDistanceToNow(listDoc.updatedAt.toDate(), {
+                  addSuffix: true,
+                })
+              : "just now"}{" "}
+          </p>
+          <p className={styles.description}>{listDoc.description}</p>
+          <p className={styles["member-paragraph"]}>Project members:</p>
+          <div className={styles.members}>
+            {listDoc.users.map((u) => (
+              <span className={styles.members} key={u.userId}>
+                {u.displayName}
+              </span>
+            ))}
           </div>
-        )}
+          {user.uid === owner?.userId && (
+            <div className={styles["owner-div"]}>
+              <button onClick={handleDeleteClick}>Delete list</button>{" "}
+              <button onClick={handleModifyClick}>Modify list</button>
+              <ConfirmDeleteModal
+                isOpen={deleteModalIsActive}
+                onConfirm={handleConfirmDelete}
+                onCancel={handleCancelDelete}
+                deleteObject="entire list and all items & users"
+              />
+              {modifyModalIsActive && (
+                <Modal title="Update List" onClose={handleCancelModify}>
+                  <ListForm
+                    initialValues={listDoc}
+                    onSubmit={handleConfirmModify}
+                  />
+                </Modal>
+              )}
+              {modifyError && <p className="error">{modifyError}</p>}
+            </div>
+          )}
+        </div>
+
+        {/* --- Items-Bereich ausgelagert --- */}
+        <ListItemsSection listId={id} listDoc={listDoc} />
       </div>
-
-      {/* --- Items-Bereich ausgelagert --- */}
-      <ListItemsSection listId={id} listDoc={listDoc} />
-
-      <div className={styles.comments}></div>
+      <div className={styles.comments}>
+        <ListComments listId={id}></ListComments>
+      </div>
     </div>
   );
 };
