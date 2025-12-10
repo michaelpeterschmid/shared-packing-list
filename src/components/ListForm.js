@@ -97,7 +97,7 @@ const ListForm = ({ initialValues, onSubmit }) => {
       ...prev,
       {
         value: { ...found, accessRight: "r" },
-        label: found.displayName || found.email,
+        label: found.email,
       },
     ]);
   };
@@ -123,7 +123,7 @@ const ListForm = ({ initialValues, onSubmit }) => {
       ...prev,
       {
         value: { ...found, accessRight: "m" },
-        label: found.displayName || found.email,
+        label: found.email,
       },
     ]);
   };
@@ -208,6 +208,8 @@ const ListForm = ({ initialValues, onSubmit }) => {
       <label>
         <span>Read Access Users (type email, press Enter)</span>
         <CreatableSelect
+          id="assignedReadUsers"
+          autoComplete="off"
           isMulti
           value={assingedReadUsers}
           onChange={handleChangeReadUsers}
@@ -220,6 +222,8 @@ const ListForm = ({ initialValues, onSubmit }) => {
       <label>
         <span>Modify Access Users (type email, press Enter)</span>
         <CreatableSelect
+          id="assignedWriteUsers"
+          autoComplete="off"
           isMulti
           value={assingedModifyUsers}
           onChange={handleChangeModifyUsers}
