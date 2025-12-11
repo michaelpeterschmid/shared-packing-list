@@ -22,16 +22,12 @@
     align-items: center;
 }
 
-
 .navbar ul {
     display: flex;
     margin: 0 auto;
     align-items: center;
     max-width: var(--bp-desktop);
 }
-
-
-
 
 .title a {
     display: inline-flex; /* keep link on one line with flex behavior */
@@ -55,5 +51,3 @@
 .navbar li:not(:first-child):hover {
     text-decoration: underline;
 }
-
-
