@@ -96,16 +96,15 @@ a:visited{
       rgba(255, 255, 255, 0.7)
     ),
     url("./../../../public/img/goal2.jpg");
-  
   background-size: cover;       /* scale to cover div */
   background-position-x: center;  /* center the image */
   background-position-y: top;
   background-repeat: no-repeat; /* avoid tiling */
-  
 }
 
 
 .list{
+    border: 1px solid black;
     border-radius: 1rem;
     background-color: white;
     padding: var(--spacing-m);
@@ -137,9 +136,6 @@ a:visited{
 .list li:not(:last-child)::after {
     content: ", ";
 }
-
-
-
 .members {
     margin-top: var(--spacing-m);
     margin-bottom: var(--spacing-s);

@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/static/css/main.fbc87f52.css",
+    "main.css": "/static/css/main.08efe7b3.css",
     "main.js": "/static/js/main.be1c7572.js",
     "static/media/holiday.png": "/static/media/holiday.c814908b0c51a8725fc2.png",
     "static/media/goal2.jpg": "/static/media/goal2.90683be1a7ffec2b5ddb.jpg",
     "static/media/shopping.jpg": "/static/media/shopping.b7da640f3c136c39a58c.jpg",
     "index.html": "/index.html",
     "static/media/home.svg": "/static/media/home.119a09aee3765497d20a4a5b3c247f13.svg",
-    "main.fbc87f52.css.map": "/static/css/main.fbc87f52.css.map",
+    "main.08efe7b3.css.map": "/static/css/main.08efe7b3.css.map",
     "main.be1c7572.js.map": "/static/js/main.be1c7572.js.map"
   },
   "entrypoints": [
-    "static/css/main.fbc87f52.css",
+    "static/css/main.08efe7b3.css",
     "static/js/main.be1c7572.js"
   ]
 }
