@@ -20,6 +20,10 @@
   overflow-y: scroll; /*Allow scrolling*/
 }
 
+.modal h2 {
+  margin-bottom: 0px;
+}
+
 .header {
   display: flex;
   justify-content: space-between;

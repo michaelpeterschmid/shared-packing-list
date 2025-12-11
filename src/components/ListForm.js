@@ -164,6 +164,9 @@ const ListForm = ({ initialValues, onSubmit }) => {
     ];
 
     const userIds = assignedUserList.map((user) => user.userId);
+    const modifyUserIds = assignedUserList
+      .filter((user) => user.accessRight === "m")
+      .map((user) => user.userId);
 
     onSubmit({
       category,
@@ -171,6 +174,7 @@ const ListForm = ({ initialValues, onSubmit }) => {
       description,
       users: assignedUserList,
       userIds,
+      modifyUserIds,
     });
   };
 

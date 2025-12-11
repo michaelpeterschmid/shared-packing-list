@@ -54,6 +54,35 @@ const List = () => {
     setModifyModalIsActive(false);
   };
 
+  // leave list
+  const [leaveModalIsActive, setLeaveModalIsActive] = useState(false);
+  const [leaveError, setLeaveError] = useState(null);
+  const handleLeaveClick = () => setLeaveModalIsActive(true);
+  const handleCancleLeave = () => setLeaveModalIsActive(false);
+  const handleConfirmLeave = async () => {
+    setLeaveError(null);
+    //remove the all entries where userId = user.uid
+    let { modifyUserIds, userIds, users } = listDoc;
+
+    modifyUserIds = (modifyUserIds || []).filter((id) => id !== user.uid);
+    userIds = (userIds || []).filter((id) => id !== user.uid);
+    //just to keep UI in sync
+    users = (users || []).filter((u) => u.userId !== user.uid);
+
+    const success = await updateList(
+      id,
+      { modifyUserIds, userIds, users },
+      true
+    );
+    if (!success) {
+      setLeaveError(listResponse.error);
+      setLeaveModalIsActive(false);
+      return;
+    }
+    setLeaveModalIsActive(false);
+    navigate("/"); // back to dashboard
+  };
+
   if (listError) {
     return <div className="error">{listError}</div>;
   }
@@ -110,6 +139,23 @@ const List = () => {
                 </Modal>
               )}
               {modifyError && <p className="error">{modifyError}</p>}
+            </div>
+          )}
+          {user.uid !== owner?.userId && (
+            <div className={styles["member-div"]}>
+              <button onClick={handleLeaveClick}>Leave list</button>
+              {leaveModalIsActive && (
+                <Modal title={"Leave list"} onClose={handleCancleLeave}>
+                  <p>Do you really want to leave this list?</p>
+                  <p>
+                    (If you want to rejoin later, the list-owner has to readd
+                    you)
+                  </p>
+                  <br />
+                  <button onClick={handleConfirmLeave}>Confirm</button>{" "}
+                  <button onClick={handleCancleLeave}>Cancel</button>
+                </Modal>
+              )}
             </div>
           )}
         </div>

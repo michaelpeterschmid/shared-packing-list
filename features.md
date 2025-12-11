@@ -20,5 +20,4 @@
 
 - A user that is a member of group has different access rights
   - Read only
-  - Full Access (CRUD) for own items and Read for Items of other people
   - Full Access (CRUD) for all items

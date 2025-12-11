@@ -43,7 +43,7 @@
     color: darkgray
 }
 
-.owner-div {
+.owner-div, .member-div {
     margin-top: var(--spacing-l);
 }
 

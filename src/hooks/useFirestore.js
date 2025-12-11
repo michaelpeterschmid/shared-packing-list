@@ -89,8 +89,26 @@ export const useFirestore = (colName) => {
   };
 
   // update documents
-  const updateDocument = async (id, updates) => {
+  const updateDocument = async (id, updates, leave = false) => {
     dispatch({ type: "IS_PENDING" });
+
+    if (leave) {
+      try {
+        await updateDoc(doc(ref, id), {
+          ...updates,
+        });
+
+        dispatchIfNotCancelled({ type: "SUCCESS" });
+        return true;
+      } catch (error) {
+        console.log(error);
+        dispatchIfNotCancelled({
+          type: "ERROR",
+          payload: error.message,
+        });
+        return false;
+      }
+    }
 
     try {
       const updatedAt = serverTimestamp();
