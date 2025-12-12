@@ -36,14 +36,14 @@ export const useSignup = () => {
 
       await updateProfile(res.user, { displayName });
 
+      await dispatch({ type: "LOGIN", payload: res.user });
+
       await setDoc(doc(db, "users", res.user.uid), {
         online: true,
         displayName,
         email: res.user.email,
         lastLogin: Timestamp.fromDate(new Date()),
       });
-
-      dispatch({ type: "LOGIN", payload: res.user });
 
       if (!isCancelled.current) {
         setIsPending(false);
@@ -67,6 +67,7 @@ export const useSignup = () => {
       if (!res) {
         throw new Error("Could not complete signup");
       }
+      await dispatch({ type: "LOGIN", payload: res.user });
 
       await setDoc(doc(db, "users", res.user.uid), {
         online: true,
@@ -74,8 +75,6 @@ export const useSignup = () => {
         email: res.user.email,
         lastLogin: Timestamp.fromDate(new Date()),
       });
-
-      dispatch({ type: "LOGIN", payload: res.user });
 
       if (!isCancelled.current) {
         setIsPending(false);

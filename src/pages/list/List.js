@@ -111,14 +111,33 @@ const List = () => {
               : "just now"}{" "}
           </p>
           <p className={styles.description}>{listDoc.description}</p>
-          <p className={styles["member-paragraph"]}>Project members:</p>
+          <p className={styles["member-paragraph"]}>
+            List read access members:
+          </p>
           <div className={styles.members}>
-            {listDoc.users.map((u) => (
-              <span className={styles.members} key={u.userId}>
-                {u.displayName}
-                {u.userId === user.uid ? " (you)" : ""}
-              </span>
-            ))}
+            {listDoc.users.some((u) => u.accessRight === "r")
+              ? listDoc.users
+                  .filter((u) => u.accessRight === "r")
+                  .map((u) => (
+                    <div key={u.userId}>
+                      {u.displayName}
+                      {u.userId === user.uid ? " (you)" : ""}
+                    </div>
+                  ))
+              : "None"}
+          </div>
+          <p className={styles["member-paragraph"]}>
+            List write access members:
+          </p>
+          <div className={styles.members}>
+            {listDoc.users
+              .filter((u) => u.accessRight !== "r")
+              .map((u) => (
+                <div key={u.userId}>
+                  {u.displayName}
+                  {u.userId === user.uid ? " (you)" : ""}
+                </div>
+              ))}
           </div>
           {user.uid === owner?.userId && (
             <div className={styles["owner-div"]}>

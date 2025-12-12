@@ -37,10 +37,13 @@ export const useLogin = () => {
     setIsPending(true);
 
     try {
+
       const res = await signInWithEmailAndPassword(auth, email, password);
 
       // update auth context
-      dispatch({ type: "LOGIN", payload: res.user });
+      await dispatch({ type: "LOGIN", payload: res.user });
+
+      
 
       // update firestore user doc
       await updateDoc(doc(db, "users", res.user.uid), {
@@ -80,7 +83,7 @@ export const useLogin = () => {
       }
 
       // update auth context
-      dispatch({ type: "LOGIN", payload: res.user });
+      await dispatch({ type: "LOGIN", payload: res.user });
 
       // update firestore user doc
       await updateDoc(doc(db, "users", res.user.uid), {

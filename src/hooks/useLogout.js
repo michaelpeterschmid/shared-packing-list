@@ -20,13 +20,15 @@ export const useLogout = () => {
     setIsPending(true);
 
     try {
-      dispatch({ type: "LOGOUT" });
-
-      await signOut(auth);
+      
 
       await updateDoc(doc(db, "users", user.uid), {
         online: false,
       });
+
+      await dispatch({ type: "LOGOUT" });
+
+      await signOut(auth);
 
       if (!isCancelled.current) {
         setIsPending(false);

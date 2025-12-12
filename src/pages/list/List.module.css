@@ -26,6 +26,10 @@
     margin-bottom: var(--spacing-l);
 }
 
+.members {
+    padding-bottom: var(--spacing-xs);
+}
+
 .members :not(:last-child)::after{
     content: ", ";
 }
@@ -33,6 +37,7 @@
 .members :last-child{
     white-space: nowrap;
 }
+
 
 .created-by, .last-updated, .category{
     color: darkgray;
